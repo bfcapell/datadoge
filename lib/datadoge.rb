@@ -13,7 +13,17 @@ module Datadoge
 
   class Railtie < Rails::Railtie
     initializer "datadoge.configure_rails_initialization" do |app|
-      $statsd = Datadog::Statsd.new
+      begin
+        $statsd = Datadog::Statsd.new
+      rescue Errno::EPERM => e
+        message = "Datadoge: unable to initialize StatsD client (#{e.class}: #{e.message})"
+        if Rails.logger
+          Rails.logger.warn(message)
+        else
+          warn(message)
+        end
+        $statsd = nil
+      end
 
       ActiveSupport::Notifications.subscribe /process_action.action_controller/ do |*args|
         event = ActiveSupport::Notifications::Event.new(*args)
@@ -35,6 +45,7 @@ module Datadoge
       end
 
       def send_event_to_statsd(name, payload)
+        return unless $statsd
         action = payload[:action] || :increment
         measurement = payload[:measurement]
         value = payload[:value]
