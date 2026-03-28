@@ -10,7 +10,7 @@ GEM
   specs:
     dogstatsd-ruby (2.1.0)
     gem_config (0.3.1)
-    rake (0.9.6)
+    rake (13.0.1)
 
 PLATFORMS
   ruby
@@ -18,7 +18,7 @@ PLATFORMS
 DEPENDENCIES
   bundler (~> 1.6)
   datadoge!
-  rake (~> 0)
+  rake (~> 13)
 
 BUNDLED WITH
    1.12.5
